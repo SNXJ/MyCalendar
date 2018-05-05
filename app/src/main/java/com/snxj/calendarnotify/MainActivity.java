@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermisstionSuccessful() {
                         Log.i("+++++++++++++++++++++", "_++++++++++++add++++++++++++++++++");
 
-                        String time = DateFormatUtil.parseTime("2018-05-05 17:02");
+                        String time = DateFormatUtil.parseTime("2018-05-07  10:20");
                         EventModel eventModel = new EventModel();
                         eventModel.setContent("添加的提醒内容");
-                        eventModel.setId("88");
+                        eventModel.setId("89");
                         eventModel.setTime(time);
                         CalendarEvent.insertEvent(eventModel);
                         //TODO 删除
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onPermisstionFailure() {
-
+                        Log.i("+++++++++++++++++++++", "_++++++++++++onPermisstionFailure++++++++++++++++++");
                     }
                 }).request(MyPermission.CALENDAR);
 
