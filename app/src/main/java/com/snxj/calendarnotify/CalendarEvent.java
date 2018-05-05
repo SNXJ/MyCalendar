@@ -1,5 +1,6 @@
 package com.snxj.calendarnotify;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import java.util.TimeZone;
  * @Date : 2018/5/5 0005.
  * @Describe :日历添加删除提醒
  **/
+@SuppressLint("MissingPermission")
 public class CalendarEvent {
     private static final String ACCOUNT_NAME = "添加的提醒";//自定义
 
@@ -58,6 +60,7 @@ public class CalendarEvent {
     /**
      * 插入事件
      */
+    @SuppressLint("MissingPermission")
     public static void insertEvent(EventModel model) {
         String calId = queryCalId();
         if (TextUtils.isEmpty(calId)) {
@@ -101,6 +104,7 @@ public class CalendarEvent {
      *
      * @return List
      */
+    @SuppressLint("MissingPermission")
     public static List<EventModel> queryEvents() {
         List<EventModel> calendars = new ArrayList<>();
         Cursor cursor;
@@ -123,6 +127,7 @@ public class CalendarEvent {
      *
      * @param model model
      */
+    @SuppressLint("MissingPermission")
     public static void updateEvent(EventModel model) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Events.DTSTART, model.getTime());
@@ -147,6 +152,7 @@ public class CalendarEvent {
      *
      * @return The number of rows deleted.
      */
+
     public static int deleteAllEvent() {
         return MyApplication.sContext.getContentResolver()
                 .delete(eventsUri, Events.CALENDAR_ID + " =? ", new String[]{queryCalId()});
@@ -157,6 +163,7 @@ public class CalendarEvent {
      *
      * @return calId
      */
+    @SuppressLint("MissingPermission")
     private static String queryCalId() {
         Cursor userCursor = null;
         try {
