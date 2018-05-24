@@ -1,7 +1,9 @@
 package com.snxj.calendarnotify;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -25,7 +27,7 @@ import java.util.TimeZone;
  **/
 @SuppressLint("MissingPermission")
 public class CalendarEvent {
-    private static final String ACCOUNT_NAME = "添加的提醒";//自定义
+    private static final String ACCOUNT_NAME = "提醒的标题";//自定义
 
     /**
      * 使用以下Uri时，Android版本>=14; 注意引用包路径：android.provider.CalendarContract下的；
@@ -74,6 +76,7 @@ public class CalendarEvent {
         event.put(Events.DESCRIPTION, model.getContent());//备注
         event.put(Events.EVENT_LOCATION, "");//地点用需要可以添加)
         event.put(Events.CALENDAR_ID, calId);
+        event.put(Events._ID, model.getId());//事件ID
         event.put(Events.DTSTART, model.getTime());//开始时间
 //        event.put(Events.DTEND, model.getTime()+10*1000);//结束时间（+10*1000）对于非重复发生的事件，必须包含DTEND字段； 与DURATION不同时存在
         event.put(Events.STATUS, Events.STATUS_CONFIRMED);
@@ -82,10 +85,10 @@ public class CalendarEvent {
 //
 //        对重复发生的事件，必须包含一个附加了RRULE或RDATE字段的DURATIION字段。注意，如果通过INSERT类型的Intent对象来插入一个事件，这个规则不适用。因为在这个Intent对象的应用场景中，你能够把RRULE、DTSTART和DTEND字段联合在一起使用，并且Calendar应用程序能够自动的把它转换成一个持续的时间。
 
-        event.put(Events.RRULE, "FREQ=WEEKLY;COUNT=5;WKST=SU");//格式化的事件复发规则（RFC5545）。如“FREQ=WEEKLY;COUNT=10;WKST=SU”。//"FREQ=WEEKLY;INTERVAL=2" 两周
+//        event.put(Events.RRULE, "FREQ=WEEKLY;COUNT=5;WKST=SU");//格式化的事件复发规则（RFC5545）。如“FREQ=WEEKLY;COUNT=10;WKST=SU”。//"FREQ=WEEKLY;INTERVAL=2" 两周
 //        event.put(Events.RDATE, 1);//事件的复发日期。通常RDATE要联合RRULE一起使用来定义一个重复发生的事件的合集。
         event.put(Events.DURATION, "PT1H");//持续一小时 "P2W"两周
-        event.put(Events.GUESTS_CAN_MODIFY, true);//参与者是否能够修改事件
+        event.put(Events.GUESTS_CAN_MODIFY, false);//参与者是否能够修改事件
 
         event.put(Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());//时区，必须有
         Uri newEvent = MyApplication.sContext.getContentResolver().insert(eventsUri, event);
