@@ -8,7 +8,7 @@ import android.content.Context;
  * @Date : 2018/5/5 0005.
  * @Describe :
  **/
-public class MyApplication extends Application {
+public class BaseApplication extends Application {
     public static Context sContext;
 
     @Override

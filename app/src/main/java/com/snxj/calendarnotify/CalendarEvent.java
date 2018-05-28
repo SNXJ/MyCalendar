@@ -1,9 +1,7 @@
 package com.snxj.calendarnotify;
 
 import android.annotation.SuppressLint;
-import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -13,6 +11,7 @@ import android.provider.CalendarContract.Attendees;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
 import android.provider.CalendarContract.Reminders;
+import android.util.Log;
 
 import com.snxj.calendarnotify.Model.EventModel;
 
@@ -78,6 +77,7 @@ public class CalendarEvent {
         event.put(Events.CALENDAR_ID, calId);
         event.put(Events._ID, model.getId());//事件ID
         event.put(Events.DTSTART, model.getTime());//开始时间
+        Log.i("+++++++++++++++++++++", "_++++++++++++ model.getTime()++++++++++++++++++" + model.getTime());
 //        event.put(Events.DTEND, model.getTime()+10*1000);//结束时间（+10*1000）对于非重复发生的事件，必须包含DTEND字段； 与DURATION不同时存在
         event.put(Events.STATUS, Events.STATUS_CONFIRMED);
         event.put(Events.HAS_ATTENDEE_DATA, 1);
@@ -91,7 +91,7 @@ public class CalendarEvent {
         event.put(Events.GUESTS_CAN_MODIFY, false);//参与者是否能够修改事件
 
         event.put(Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());//时区，必须有
-        Uri newEvent = MyApplication.sContext.getContentResolver().insert(eventsUri, event);
+        Uri newEvent = BaseApplication.sContext.getContentResolver().insert(eventsUri, event);
 
         // 事件提醒的设定
         long id = Long.parseLong(newEvent != null ? newEvent.getLastPathSegment() : "1");
@@ -99,7 +99,7 @@ public class CalendarEvent {
         values.put(Reminders.EVENT_ID, id);
         values.put(Reminders.MINUTES, "10");//提前提醒时间 min
         values.put(Reminders.METHOD, Reminders.METHOD_ALERT);//提醒方式method
-        MyApplication.sContext.getContentResolver().insert(remindersUri, values);
+        BaseApplication.sContext.getContentResolver().insert(remindersUri, values);
     }
 
     /**
@@ -113,7 +113,7 @@ public class CalendarEvent {
         Cursor cursor;
         // 本地帐户查询：ACCOUNT_TYPE_LOCAL是一个特殊的日历账号类型，它不跟设备账号关联。这种类型的日历不同步到服务器
         // 如果是谷歌的账户是可以同步到服务器的
-        cursor = MyApplication.sContext.getContentResolver().query(eventsUri, EVENTS_COLUMNS,
+        cursor = BaseApplication.sContext.getContentResolver().query(eventsUri, EVENTS_COLUMNS,
                 Calendars.ACCOUNT_NAME + " = ? ", new String[]{ACCOUNT_NAME}, null);
         while (cursor != null && cursor.moveToNext()) {
             EventModel eventModel = new EventModel();
@@ -135,7 +135,7 @@ public class CalendarEvent {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Events.DTSTART, model.getTime());
         contentValues.put(Events.DESCRIPTION, model.getContent());
-        MyApplication.sContext.getContentResolver().update(eventsUri, contentValues
+        BaseApplication.sContext.getContentResolver().update(eventsUri, contentValues
                 , Events._ID + " =? ", new String[]{model.getId()});
     }
 
@@ -146,7 +146,7 @@ public class CalendarEvent {
      * @return The number of rows deleted.
      */
     public static int deleteEvent(String id) {
-        return MyApplication.sContext.getContentResolver()
+        return BaseApplication.sContext.getContentResolver()
                 .delete(eventsUri, Events._ID + " =? ", new String[]{id});
     }
 
@@ -157,7 +157,7 @@ public class CalendarEvent {
      */
 
     public static int deleteAllEvent() {
-        return MyApplication.sContext.getContentResolver()
+        return BaseApplication.sContext.getContentResolver()
                 .delete(eventsUri, Events.CALENDAR_ID + " =? ", new String[]{queryCalId()});
     }
 
@@ -170,7 +170,7 @@ public class CalendarEvent {
     private static String queryCalId() {
         Cursor userCursor = null;
         try {
-            userCursor = MyApplication.sContext.getContentResolver().query(calendarsUri, null, "name=?", new String[]{ACCOUNT_NAME}, null);
+            userCursor = BaseApplication.sContext.getContentResolver().query(calendarsUri, null, "name=?", new String[]{ACCOUNT_NAME}, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -207,6 +207,6 @@ public class CalendarEvent {
                 .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
                 .appendQueryParameter(Calendars.ACCOUNT_NAME, ACCOUNT_NAME)
                 .appendQueryParameter(Calendars.ACCOUNT_TYPE, "1").build();
-        MyApplication.sContext.getContentResolver().insert(calendarUri, value);
+        BaseApplication.sContext.getContentResolver().insert(calendarUri, value);
     }
 }
