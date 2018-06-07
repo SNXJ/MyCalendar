@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_del_all.setOnClickListener(this);
         tv_query.setOnClickListener(this);
         tv_update.setOnClickListener(this);
-        showGudie1();
+//        showGudie1();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         }))
                 .addGuidePage(GuidePage.newInstance()
-                        .addHighLight(tv_del, HighLight.Shape.CIRCLE,10).setEverywhereCancelable(true)
+                        .addHighLight(tv_del, HighLight.Shape.CIRCLE, 10).setEverywhereCancelable(true)
                         .setLayoutRes(R.layout.guide_layout_01).setOnLayoutInflatedListener(new OnLayoutInflatedListener() {
                             @Override
                             public void onLayoutInflated(View view) {
@@ -152,38 +152,82 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void upDateCalendar() {
-        String time = DateFormatUtil.parseTime("2018-05-29  15:20");
-        EventModel eventModel = new EventModel();
-        eventModel.setContent("更新提醒内容*********************xxx*************");
-        eventModel.setId(5 + "");
-        eventModel.setTime(time);
-        CalendarEvent.updateEvent(eventModel);
+        new PermissionRequest(MainActivity.this, new PermissionRequest.PermissionCallback() {
+            @Override
+            public void onPermisstionSuccessful() {
+                String time = DateFormatUtil.parseTime("2018-05-29  15:20");
+                EventModel eventModel = new EventModel();
+                eventModel.setContent("更新提醒内容*********************xxx*************");
+                eventModel.setId(5 + "");
+                eventModel.setTime(time);
+                CalendarEvent.updateEvent(eventModel);
+            }
+
+            @Override
+            public void onPermisstionFailure() {
+                Log.i("+++++++++++++++++++++", "_++++++++++++onPermisstionFailure++++++++++++++++++");
+            }
+        }).request(MyPermission.CALENDAR);
+
     }
 
     private void queryCalendar() {
-        List<EventModel> list = CalendarEvent.queryEvents();
-        if (null == list) return;
-        if (list.size() <= 0) return;
-        for (int i = 0; i < list.size(); i++) {
-            Log.i("+++++++++++++++++++++", list.get(i).getId() + "=id+++++++++++提醒的内容++++++++++++++++++==" + list.get(i).getContent());
+        new PermissionRequest(MainActivity.this, new PermissionRequest.PermissionCallback() {
+            @Override
+            public void onPermisstionSuccessful() {
+                List<EventModel> list = CalendarEvent.queryEvents();
+                if (null == list) return;
+                if (list.size() <= 0) return;
+                for (int i = 0; i < list.size(); i++) {
+                    Log.i("+++++++++++++++++++++", list.get(i).getId() + "=id+++++++++++提醒的内容++++++++++++++++++==" + list.get(i).getContent());
 
-        }
+                }
+            }
+
+            @Override
+            public void onPermisstionFailure() {
+                Log.i("+++++++++++++++++++++", "_++++++++++++onPermisstionFailure++++++++++++++++++");
+            }
+        }).request(MyPermission.CALENDAR);
+
     }
 
     private void delAllCalendar() {
-        CalendarEvent.deleteAllEvent();
+        new PermissionRequest(MainActivity.this, new PermissionRequest.PermissionCallback() {
+            @Override
+            public void onPermisstionSuccessful() {
+                CalendarEvent.deleteAllEvent();
+            }
+
+            @Override
+            public void onPermisstionFailure() {
+                Log.i("+++++++++++++++++++++", "_++++++++++++onPermisstionFailure++++++++++++++++++");
+            }
+        }).request(MyPermission.CALENDAR);
+
+
     }
 
     private void delCalendar() {
-        CalendarEvent.deleteEvent("5");
-        Log.i("+++++++++++++++++++++", "_++++++++++++del++++++++++++++++++" + 5);
+        new PermissionRequest(MainActivity.this, new PermissionRequest.PermissionCallback() {
+            @Override
+            public void onPermisstionSuccessful() {
+                CalendarEvent.deleteEvent("5");
+            }
+
+            @Override
+            public void onPermisstionFailure() {
+                Log.i("+++++++++++++++++++++", "_++++++++++++onPermisstionFailure++++++++++++++++++");
+            }
+        }).request(MyPermission.CALENDAR);
+
+
     }
 
     private void addCalendar(final String date) {
         new PermissionRequest(MainActivity.this, new PermissionRequest.PermissionCallback() {
             @Override
             public void onPermisstionSuccessful() {
-                Log.i("+++++++++++++++++++++", "_++++++++++++add++++++++++++++++++" + addTemp);
                 String time = DateFormatUtil.parseTime(date);
                 EventModel eventModel = new EventModel();
                 eventModel.setContent("提醒内容**********************************" + addTemp);
